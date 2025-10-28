@@ -1,0 +1,59 @@
+{
+  "name": "Digital Forge MCP RAG",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "python.formatting.provider": "black",
+        "github.copilot.enable": {
+          "*": true,
+          "python": true,
+          "markdown": true
+        },
+        "github.copilot.chat.enable": true,
+        "github.copilot.agent.enabled": true
+      }
+    }
+  },
+  
+  "forwardPorts": [8000, 6333],
+  
+  "portsAttributes": {
+    "8000": {
+      "label": "MCP Server",
+      "onAutoForward": "notify"
+    },
+    "6333": {
+      "label": "Qdrant",
+      "onAutoForward": "silent"
+    }
+  },
+  
+  "postCreateCommand": "pip install -r requirements.txt && docker-compose up -d && sleep 10 && python setup_rag.py",
+  
+  "remoteEnv": {
+    "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}",
+    "QDRANT_HOST": "localhost",
+    "QDRANT_PORT": "6333",
+    "EMBEDDING_MODEL": "text-embedding-3-small"
+  },
+  
+  "mounts": [
+    "source=${localWorkspaceFolder}/.vscode,target=/workspaces/${localWorkspaceFolderBasename}/.vscode,type=bind"
+  ]
+}
