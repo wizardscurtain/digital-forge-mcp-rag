@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: digital-forge-mcp-rag
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn rag_mcp_server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: QDRANT_HOST
+        value: localhost
+      - key: QDRANT_PORT
+        value: 6333
+      - key: EMBEDDING_MODEL
+        value: text-embedding-3-small
+      - key: OPENAI_API_KEY
+        sync: false
